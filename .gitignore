@@ -1,0 +1,28 @@
+# Obsidian
+.obsidian/workspace*
+.obsidian/cache
+.trash/
+
+# Секреты
+.env
+configs/.env
+**/.env
+
+# Docker / Wazuh
+wazuh-docker/single-node/config/wazuh_indexer_ssl_certs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Архивы и бэкапы
+*.zip
+*.tar.gz
+*.bak
