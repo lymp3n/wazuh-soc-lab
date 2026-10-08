@@ -49,7 +49,9 @@
 |---|---|---|---|---|
 | [CS-001](docs/incident-reports/CS-001-SSH-BruteForce.md) | SSH Brute-Force | 5760, 5557, 5758, 5763 | T1110.001 | High (10) |
 | [CS-002](docs/incident-reports/CS-002-User-Creation.md) | Suspicious User Creation | 5902, 5555, 40501 | T1136.001 | Critical (15) |
-| [CS-003](docs/incident-reports/CS-003-Sudo-Activity.md) | Sudo Privilege Escalation | 5403, 5404, 5405 | T1548.003 | High (10) |
+| [CS-003](docs/incident-reports/CS-003-Sudo-Activity.md) | Sudo Privilege Escalation | 5403, 5405 | T1548.003 | High (10) |
+
+Подробнее — в [индексе инцидентов](docs/incident-reports/README.md).
 
 ## 🛠️ Стек технологий
 
@@ -62,37 +64,35 @@
 ## 🚀 Быстрый старт
 
 ### Требования
+
 - Docker Desktop (Windows/macOS/Linux)
 - Минимум 8 ГБ RAM, 4 CPU, 50 ГБ диска
 - Git
 
-### Развёртывание
+### Развёртывание Wazuh
 
 ```bash
 # 1. Клонировать репозиторий
-git clone https://github.com/<username>/wazuh-soc-lab.git
+git clone https://github.com/lymp3n/wazuh-soc-lab.git
 cd wazuh-soc-lab
 
-# 2. Создать .env из шаблона
-cp configs/.env.example configs/.env
-# Отредактировать .env — задать свои пароли
-
-# 3. Перейти в папку с docker-compose
+# 2. Скачать официальный репозиторий Wazuh Docker
+git clone -b v4.8.0 https://github.com/wazuh/wazuh-docker.git
 cd wazuh-docker/single-node
 
-# 4. Сгенерировать SSL-сертификаты
+# 3. Сгенерировать SSL-сертификаты
 docker compose -f generate-indexer-certs.yml run --rm generator
 
-# 5. Запустить стек
+# 4. Запустить стек
 docker compose up -d
 
-# 6. Проверить статус
+# 5. Проверить статус
 docker compose ps
 ```
 
-Дашборд: **https://localhost:443** (логин/пароль из `.env`).
+Дашборд: **https://localhost:443** (учётные данные из вашего `.env`).
 
-### Подключение агента (Debian)
+### Подключение агента (Debian 13)
 
 ```bash
 # Установка агента Wazuh 4.8.0 (версия должна совпадать с менеджером)
@@ -105,7 +105,8 @@ sudo systemctl enable --now wazuh-agent
 
 **Важно:** на Debian 13 используется systemd-journald, а Wazuh 4.8.0
 не умеет читать journald напрямую (поддержка появилась в 4.9.0).
-Решение — установить rsyslog и включить пересылку из journald.
+Решение — установить `rsyslog` и включить пересылку из journald.
+Подробнее — в [lab-setup.md](docs/lab-setup.md).
 
 ## 📚 Документация
 
@@ -113,24 +114,6 @@ sudo systemctl enable --now wazuh-agent
 - [Настройка с нуля](docs/lab-setup.md)
 - [Маппинг на MITRE ATT&CK](docs/mitre-mapping.md)
 - [Индекс инцидентов](docs/incident-reports/README.md)
-
-## 🧪 Воспроизведение атак
-
-В папке `scripts/` лежат готовые скрипты для генерации каждой атаки:
-
-```bash
-# SSH Brute-Force
-bash scripts/attack-ssh-bruteforce.sh 192.168.0.9
-
-# Suspicious User Creation
-bash scripts/attack-user-creation.sh
-
-# Sudo Privilege Escalation
-bash scripts/attack-sudo-activity.sh
-
-# Полный сброс лаборатории
-bash scripts/reset-lab.sh
-```
 
 ## 📊 Скриншоты
 
@@ -141,12 +124,17 @@ bash scripts/reset-lab.sh
 
 ## 🎓 Чему я научился
 
-- Развёртывание single-node Wazuh в Docker с persist-хранилищем.
-- Настройка сбора логов через syslog (обход несовместимости journald).
-- Диагностика проблем: NAT, брандмауэр, версии агентов, индексация в OpenSearch.
+- Развёртывание single-node Wazuh в Docker с persist-хранилищем
+  (bind mounts на отдельный диск).
+- Настройка сбора логов через syslog и обход несовместимости journald
+  в Wazuh 4.8.0.
+- Диагностика проблем: NAT между Docker и внешней сетью, брандмауэр
+  Windows, версии агентов, индексация в OpenSearch.
 - Работа с композитными алертами (rule 40501 — level 15).
-- Триаж инцидентов и оформление по стандарту, близкому к реальному SOC.
-- Работа с MITRE ATT&CK: маппинг правил на тактики и техники.
+- Триаж инцидентов и оформление отчётов по структуре, близкой к
+  реальному SOC (Metadata, Description, Evidence, Timeline, Response,
+  Verdict).
+- Работа с MITRE ATT&CK: маппинг правил Wazuh на тактики и техники.
 - Работа с Git, Markdown, Docker Compose.
 
 ## 📝 Roadmap
@@ -163,6 +151,5 @@ bash scripts/reset-lab.sh
 
 ## 👤 Автор
 
-**Федченко Андрей** — Jr SOC Analyst L1
-- GitHub: [@lympen](https://github.com/lympen)
-- Email: fedchenko.andrey.m@gmail.com
+**Федченко Андрей** — начинающий SOC Analyst L1
+- GitHub: [@lymp3n](https://github.com/lymp3n)
