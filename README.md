@@ -90,7 +90,7 @@ docker compose up -d
 docker compose ps
 ```
 
-Дашборд: **https://localhost:443** (учётные данные из вашего `.env`).
+Дашборд: **https://localhost:443**
 
 ### Подключение агента (Debian 13)
 
